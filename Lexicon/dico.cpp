@@ -33,9 +33,7 @@ bool rechercherDico(Dico& dico, char* mot) {
     return false;
 }
 
-void chargerDico(Dico& dico) {
-    ifstream in("ods4.txt");
-
+void chargerDico(Dico& dico, istream& in) {
     unsigned int nb = 0;
     char s[NB_LETTRE];
 
@@ -45,7 +43,6 @@ void chargerDico(Dico& dico) {
         ++nb;
         in >> setw(NB_LETTRE) >> s;
     }
-    in.close();
 }
 
 void detruire(Dico& dico) {

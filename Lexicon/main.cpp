@@ -6,7 +6,7 @@
 using namespace std;
 
 #include "paquet.h"
-#include "Chaine.h"
+#include "chaine.h"
 #include "jeu.h"
 #include "dico.h"
 
@@ -25,9 +25,13 @@ int main(int argc, const char* argv[]) {
 	else
 		cout << "il n'y a pas de parametre" << endl;
 
+	ifstream in("ods4.txt");
+
 	Dico dico;
 	initialiser(dico, NB_MOTS, NB_LETTRE);
-	chargerDico(dico);
+	if (in)
+		chargerDico(dico, in);
+	in.close();
 
 	while (nbJoueurs >= 2) {
 		Joueur* joueurs = new Joueur[nbJoueurs];
