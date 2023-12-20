@@ -54,7 +54,7 @@ void ecrire(Table& t, unsigned int i, const Chaine& mot) {
 
 
 
-void afficher(Table& t, unsigned int nb) {
+void afficher(const Table& t, unsigned int nb) {
 	for (unsigned int i = 0; i < nb; ++i) {
 		cout << i + 1 << " - ";
 		afficher(t.mot[i]);

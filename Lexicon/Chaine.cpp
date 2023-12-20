@@ -12,7 +12,7 @@
 using namespace std;
 
 #include <algorithm>
-#include "Chaine.h"
+#include "chaine.h"
 
 /** 
  * brief Initialisation d'une chaîne vide

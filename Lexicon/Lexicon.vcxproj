@@ -139,16 +139,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Chaine.h" />
+    <ClInclude Include="chaine.h" />
     <ClInclude Include="dico.h" />
     <ClInclude Include="jeu.h" />
+    <ClInclude Include="joueur.h" />
     <ClInclude Include="paquet.h" />
     <ClInclude Include="table.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Chaine.cpp" />
+    <ClCompile Include="chaine.cpp" />
     <ClCompile Include="dico.cpp" />
     <ClCompile Include="jeu.cpp" />
+    <ClCompile Include="joueur.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="paquet.cpp" />
     <ClCompile Include="table.cpp" />

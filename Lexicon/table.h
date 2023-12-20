@@ -1,7 +1,7 @@
 #ifndef _TABLE_
 #define _TABLE_
 
-#include "Chaine.h"
+#include "chaine.h"
 
 
 /** @brief Conteneur d'items alloués en mémoire dynamique
@@ -19,6 +19,6 @@ void detruire(Table& t);
 
 void ecrire(Table& t, unsigned int i, const Chaine& mot);
 
-void afficher(Table& t, unsigned int nb);
+void afficher(const Table& t, unsigned int nb);
 
 #endif
