@@ -9,14 +9,21 @@ struct Joueur {
 	unsigned int points;
 };
 
-void initialiser(Joueur* joueurs, unsigned int nbJoueurs, Chaine& cTalon);
+struct ConteneurJ {
+	Joueur* joueur;
+	unsigned int nbJoueurs;
+};
 
-bool finPartie(const Joueur* joueur, unsigned int nbJoueurs);
+void initialiser(ConteneurJ& cJoueurs, unsigned int nbJoueurs);
 
-bool finTour(const Joueur* joueurs, unsigned int nbJoueurs);
+void distribution(ConteneurJ& cJoueurs, Chaine& cTalon);
 
-void detruire(Joueur* joueurs);
+bool finPartie(const ConteneurJ& cJoueurs);
 
-void exclure(Joueur* joueurs, unsigned int& nbJoueurs);
+bool finTour(const ConteneurJ& cJoueurs);
+
+void detruire(ConteneurJ& cJoueurs);
+
+void exclure(ConteneurJ& cJoueurs);
 
 #endif

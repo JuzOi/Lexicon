@@ -3,7 +3,7 @@ using namespace std;
 
 #include "jeu.h"
 
-void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur* joueurs, unsigned int nbJoueurs) {
+void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs) {
 	Paquet pTalon = jeu_base();
 	melanger(pTalon);
 	cTalon = convertir(pTalon);
@@ -15,58 +15,54 @@ void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur* joue
 	supprimer(cTalon);
 
 	initialiser(table, 1, 2);
-	initialiser(joueurs, nbJoueurs, cTalon);
+	distribution(cJoueurs, cTalon);
 }
 
-void destruction(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur* joueurs, unsigned int nbJoueurs) {
+void destruction(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs) {
 	detruire(table);
 	detruire(cTalon);
 	detruire(cExposee);
-	for (unsigned int i = 0; i < nbJoueurs; ++i)
-		detruire(joueurs[i].main);
+	detruire(cJoueurs);
 }
 
-void partie(Joueur* joueurs, unsigned int& nbJoueurs, Dico& dico) {
+void partie(ConteneurJ& cJoueurs, Dico& dico) {
 	Table table;
 	Chaine cTalon;
 	Chaine cExposee;
 
-	initialisation(table, cTalon, cExposee, joueurs, nbJoueurs);
-
-	while (!finPartie(joueurs, nbJoueurs))
-		tour(table, cTalon, cExposee, joueurs, nbJoueurs, dico);
+	while (!finPartie(cJoueurs)){
+		initialisation(table, cTalon, cExposee, cJoueurs);
+		tour(table, cTalon, cExposee, cJoueurs, dico);
+	}
 
 	cout << "La partie est finie" << endl;
-	exclure(joueurs, nbJoueurs);
-	destruction(table, cTalon, cExposee, joueurs, nbJoueurs);
+	exclure(cJoueurs);
+	destruction(table, cTalon, cExposee, cJoueurs);
 }
 
-void tour(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur* joueurs, unsigned int nbJoueurs, Dico& dico) {
+void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, Dico& dico) {
 	char cmd;
 	unsigned int nbmots = 0;
-	while(!finTour(joueurs, nbJoueurs)){
-		for (unsigned int i = 0; i < nbJoueurs; ++i) {
-			cout << "*" << " Joueur " << joueurs[i].id << " (" << lire(cExposee).lettre << ") ";
-			afficher(joueurs[i].main);
+	while(!finTour(cJoueurs)){
+		for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
+			cout << "*" << " Joueur " << cJoueurs.joueur[i].id << " (" << lire(cExposee).lettre << ") ";
+			afficher(cJoueurs.joueur[i].main);
 			if (nbmots)
 				afficher(table, nbmots);
 
 			cout << "> ";
 			cin >> cmd;
 
-			if (!cin || (cmd != 'E' && cmd != 'T' && cmd != 'P' &&  cmd != 'D')) {
+			if (!cin || (cmd != 'E' && cmd != 'T' && cmd != 'P' &&  cmd != 'D'))
 				erreur(1);
-			}
-			else {
-				supercmd(table, cTalon, cExposee, joueurs[i], nbmots, cmd, dico);
-				afficher(table, nbmots);
-			}
+			else
+				supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, cmd, dico);
 		}
 	}
-	cout << "Le tour est fini" << endl << "*Scores" << endl;
-	for (unsigned int i = 0; i < nbJoueurs; ++i) {
-		joueurs[i].points = comptePoints(joueurs[i].main);
-		cout << "Joueur " << joueurs[i].id << " : " << joueurs[i].points << " points" << endl;
+	cout << "Le tour est fini" << endl << " *Scores" << endl;
+	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
+		cJoueurs.joueur[i].points = comptePoints(cJoueurs.joueur[i].main);
+		cout << "Joueur " << cJoueurs.joueur[i].id << " : " << cJoueurs.joueur[i].points << " points" << endl;
 	}
 }
 
@@ -106,31 +102,31 @@ void erreur(unsigned int n) {
 	}
 }
 
-void cmdTalon(Chaine& cTalon, Chaine& cExposee, Chaine& cJoueur) {
+void cmdTalon(Chaine& cTalon, Chaine& cExposee, Chaine& main) {
 	char mot;
 	cin >> mot;
-	if (!cin || !rechercherLettre(cJoueur, mot)) {
+	if (!cin || !rechercherLettre(main, mot)) {
 		erreur(1);
 	}
 	else {
-		inserer(cExposee, lire(cJoueur));
-		ecrire(cJoueur, lire(cTalon));
+		inserer(cExposee, lire(main));
+		ecrire(main, lire(cTalon));
 		supprimer(cTalon);
-		trier_main(cJoueur);
+		trier_main(main);
 	}
 }
 
-void cmdExposee(Chaine& cExposee, Chaine& cJoueur) {
+void cmdExposee(Chaine& cExposee, Chaine& main) {
 	char mot;
 	cin >> mot;
-	if (!cin || !rechercherLettre(cJoueur, mot)) {
+	if (!cin || !rechercherLettre(main, mot)) {
 		erreur(1);
 	}
 	else {
-		Carte tmp = lire(cJoueur);
-		ecrire(cJoueur, lire(cExposee));
+		Carte tmp = lire(main);
+		ecrire(main, lire(cExposee));
 		ecrire(cExposee, tmp);
-		trier_main(cJoueur);
+		trier_main(main);
 	}
 }
 
@@ -140,18 +136,23 @@ void cmdPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico) {
 	if (!cin)
 		erreur(1);
 	else {
-		if (!rechercherDico(dico, mot) || !rechercherMot(joueur.main, mot)) {
-			erreur(2);
+		if (!rechercherDico(dico, mot)) {
 			joueur.points += 3;
+			erreur(2);
 		}
 		else {
 			Chaine cPoser;
 			initialiser(cPoser);
-			for (unsigned int i = 0; i <= strlen(mot); ++i) {
+			for (unsigned int i = 0; i < strlen(mot); ++i) {
 				if (rechercherLettre(joueur.main, mot[i])) {
 					inserer(cPoser, lire(joueur.main));
 					suivant(cPoser);
 					supprimer(joueur.main);
+				}
+				else {
+					joueur.points += 3;
+					detruire(cPoser);
+					erreur(2);
 				}
 			}
 			ecrire(table, nbmots++, cPoser);
@@ -166,22 +167,22 @@ void debugPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico) 
 	if (!cin)
 		erreur(1);
 	else {
-		if (!rechercherDico(dico, mot) || !rechercherMot(joueur.main, mot)) {
-			erreur(2);
-			joueur.points += 3;
-		}
-		else {
-			Chaine cPoser;
-			initialiser(cPoser);
-			for (unsigned int i = 0; i <= strlen(mot); ++i) {
-				if (rechercherLettre(joueur.main, mot[i])) {
-					inserer(cPoser, lire(joueur.main));
-					suivant(cPoser);
-					supprimer(joueur.main);
-				}
+		Chaine cPoser;
+		initialiser(cPoser);
+		for (unsigned int i = 0; i < strlen(mot); ++i) {
+			if (rechercherLettre(joueur.main, mot[i])) {
+				inserer(cPoser, lire(joueur.main));
+				suivant(cPoser);
+				supprimer(joueur.main);
 			}
-			ecrire(table, nbmots++, cPoser);
+			else {
+				erreur(2);
+				joueur.points += 3;
+				detruire(cPoser);
+				return;
+			}
 		}
+		ecrire(table, nbmots++, cPoser);
 	}
 	delete[] mot;
 }

@@ -8,6 +8,7 @@ using namespace std;
 #include "paquet.h"
 #include "chaine.h"
 #include "jeu.h"
+#include "joueur.h"
 #include "dico.h"
 
 /* 
@@ -33,9 +34,11 @@ int main(int argc, const char* argv[]) {
 		chargerDico(dico, in);
 	in.close();
 
-	while (nbJoueurs >= 2) {
-		Joueur* joueurs = new Joueur[nbJoueurs];
-		partie(joueurs, nbJoueurs, dico);
+	ConteneurJ cJoueurs;
+	initialiser(cJoueurs, nbJoueurs);
+
+	while (cJoueurs.nbJoueurs >= 2) {
+		partie(cJoueurs, dico);
 	}
 
 	detruire(dico);

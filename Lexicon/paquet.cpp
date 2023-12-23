@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <cctype>
 
 using namespace std;
 
@@ -52,7 +53,7 @@ void detruire(Paquet& paquet) {
 }
 
 void trier(Paquet& paquet) {
-	sort(paquet.carte, paquet.carte + MAIN, [](const Carte& carte1, const Carte& carte2) {
-		return carte1.lettre < carte2.lettre;
+	sort(paquet.carte, paquet.carte + paquet.taille, [](const Carte& carte1, const Carte& carte2) {
+		return tolower(carte1.lettre) < tolower(carte2.lettre);
 		});
 }

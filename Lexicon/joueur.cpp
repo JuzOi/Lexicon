@@ -3,41 +3,46 @@ using namespace std;
 
 #include "jeu.h"
 
-void initialiser(Joueur* joueurs, unsigned int nbJoueurs, Chaine& cTalon) {
+void initialiser(ConteneurJ& cJoueurs, unsigned int nbJoueurs) {
+	cJoueurs.nbJoueurs = nbJoueurs;
+	cJoueurs.joueur = new Joueur[nbJoueurs];
 	for (unsigned int i = 0; i < nbJoueurs; ++i) {
-		joueurs[i].main = distribuer(cTalon);
-		trier_main(joueurs[i].main);
-		joueurs[i].id = i + 1;
-		joueurs[i].points = 0;
+		cJoueurs.joueur[i].id = i + 1;
+		cJoueurs.joueur[i].points = 0;
 	}
 }
 
-bool finPartie(const Joueur* joueurs, unsigned int nbJoueurs) {
-	for (unsigned int i = 0; i < nbJoueurs; ++i) {
-		if (joueurs[i].points >= 100)
+void distribution(ConteneurJ& cJoueurs, Chaine& cTalon) {
+	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
+		cJoueurs.joueur[i].main = distribuer(cTalon);
+		trier_main(cJoueurs.joueur[i].main);
+	}
+}
+
+bool finPartie(const ConteneurJ& cJoueurs) {
+	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
+		if (cJoueurs.joueur[i].points >= 100)
 			return true;
 	}
 	return false;
 }
 
-bool finTour(const Joueur* joueurs, unsigned int nbJoueurs) {
-	for (unsigned int i = 0; i < nbJoueurs; ++i) {
-		if (estVide(joueurs[i].main))
+bool finTour(const ConteneurJ& cJoueurs) {
+	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
+		if (estVide(cJoueurs.joueur[i].main))
 			return true;
 	}
 	return false;
 }
 
-void detruire(Joueur* joueurs) {
-	delete[] joueurs;
-	joueurs = nullptr;
+void detruire(ConteneurJ& cJoueurs) {
+	delete[] cJoueurs.joueur;
+	cJoueurs.joueur = nullptr;
 }
 
-void exclure(Joueur* joueurs, unsigned int& nbJoueurs) {
-	unsigned newTaille = 0;
-	for (unsigned int i = 0; i < nbJoueurs; ++i) {
-		if (joueurs[i].points < 100)
-			joueurs[newTaille++] = joueurs[i];
+void exclure(ConteneurJ& cJoueurs) {
+	for (unsigned int i = 0, j = 0; i < cJoueurs.nbJoueurs; ++i) {
+		if (cJoueurs.joueur[i].points < 100)
+			cJoueurs.joueur[j++] = cJoueurs.joueur[i];
 	}
-	nbJoueurs = newTaille;
 }

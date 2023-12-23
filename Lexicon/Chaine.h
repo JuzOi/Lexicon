@@ -124,16 +124,12 @@ void afficher(Chaine& c);
 
 Chaine distribuer(Chaine& c);
 
-bool comparer(const Carte& carte1, const Carte& carte2);
-
 unsigned int longueur(Chaine& c);
 
 void trier_main(Chaine& c);
 
 unsigned int comptePoints(Chaine& c);
 
-bool rechercherLettre(Chaine& c, char lettre);
-
-bool rechercherMot(Chaine& c, char* mot);
+bool rechercherLettre(Chaine& c, const char lettre);
 
 #endif /*CHAINE_H_*/

@@ -142,10 +142,8 @@ void suivant(Chaine& c) {
 Chaine convertir(const Paquet& paquet) {
     Chaine cPaquet;
     initialiser(cPaquet);
-    for (unsigned int i = 0; i < paquet.taille; ++i) {
+    for (unsigned int i = 0; i < paquet.taille; ++i)
         inserer(cPaquet, paquet.carte[paquet.taille - i - 1]);
-    }
-    debut(cPaquet);
     return cPaquet;
 }
 
@@ -167,10 +165,6 @@ Chaine distribuer(Chaine& c) {
         supprimer(c);
     }
     return cPaquet;
-}
-
-bool comparer(const Carte& carte1, const Carte& carte2) {
-    return carte1.lettre < carte2.lettre;
 }
 
 unsigned int longueur(Chaine& c) {
@@ -211,18 +205,9 @@ unsigned int comptePoints(Chaine& c) {
     return somme;
 }
 
-bool rechercherLettre(Chaine& c, char lettre) {
+bool rechercherLettre(Chaine& c, const char lettre) {
     debut(c);
-    while (!estFin(c) && lire(c).lettre != lettre) {
+    while (!estFin(c) && lire(c).lettre != lettre)
         suivant(c);
-    }
     return !estFin(c);
-}
-
-bool rechercherMot(Chaine& c, char* mot) {
-    for (; *mot; ++mot) {
-        if (!rechercherLettre(c, *mot))
-            return false;
-    }
-    return true;
 }
