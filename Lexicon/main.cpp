@@ -28,6 +28,8 @@ int main(int argc, const char* argv[]) {
 
 	ifstream in("ods4.txt");
 
+	srand(time(NULL));
+
 	Dico dico;
 	initialiser(dico, NB_MOTS, NB_LETTRE);
 	if (in)
@@ -35,10 +37,12 @@ int main(int argc, const char* argv[]) {
 	in.close();
 
 	ConteneurJ cJoueurs;
-	initialiser(cJoueurs, nbJoueurs);
-
-	while (cJoueurs.nbJoueurs >= 2) {
-		partie(cJoueurs, dico);
+	if (nbJoueurs >= 2) {
+		initialiser(cJoueurs, nbJoueurs);
+		while (cJoueurs.nbJoueurs >= 2) {
+			partie(cJoueurs, dico);
+		}
+		detruire(cJoueurs);
 	}
 
 	detruire(dico);

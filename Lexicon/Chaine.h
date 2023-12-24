@@ -118,7 +118,9 @@ void suivant(Chaine& c);
 
 
 
-Chaine convertir(const Paquet& paquet);
+void convertirP(Chaine& c, const Paquet& paquet);
+
+void convertirC(Chaine& c, Paquet& p);
 
 void afficher(Chaine& c);
 
@@ -126,10 +128,14 @@ Chaine distribuer(Chaine& c);
 
 unsigned int longueur(Chaine& c);
 
-void trier_main(Chaine& c);
+void trierPaquet(Chaine& c);
 
 unsigned int comptePoints(Chaine& c);
 
 bool rechercherLettre(Chaine& c, const char lettre);
+
+void reinserer(Chaine& c1, Chaine& c2);
+
+Chaine rechercherMot(Chaine& c, const char* mot);
 
 #endif /*CHAINE_H_*/

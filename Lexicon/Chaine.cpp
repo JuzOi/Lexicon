@@ -139,12 +139,19 @@ void suivant(Chaine& c) {
     c.courant = &((*(c.courant))->suiv);
 }
 
-Chaine convertir(const Paquet& paquet) {
-    Chaine cPaquet;
-    initialiser(cPaquet);
-    for (unsigned int i = 0; i < paquet.taille; ++i)
-        inserer(cPaquet, paquet.carte[paquet.taille - i - 1]);
-    return cPaquet;
+void convertirP(Chaine& c, const Paquet& p) {
+    debut(c);
+    for (unsigned int i = 0; i < p.taille; ++i)
+        inserer(c, p.carte[p.taille - i - 1]);
+}
+
+void convertirC(Chaine& c, Paquet& p) {
+    debut(c);
+    unsigned int i = 0;
+    while (!estVide(c)) {
+        p.carte[i++] = lire(c);
+        supprimer(c);
+    }
 }
 
 void afficher(Chaine& c) {
@@ -177,7 +184,7 @@ unsigned int longueur(Chaine& c) {
     return nb;
 }
 
-void trier_main(Chaine& c) {
+void trierPaquet(Chaine& c) {
     unsigned int nb = longueur(c);
     Paquet pTriee;
     initialiser(pTriee, nb);
@@ -210,4 +217,31 @@ bool rechercherLettre(Chaine& c, const char lettre) {
     while (!estFin(c) && lire(c).lettre != lettre)
         suivant(c);
     return !estFin(c);
+}
+
+void reinserer(Chaine& c1, Chaine& c2) {
+    debut(c1);
+    debut(c2);
+    while (!estFin(c2)) {
+        inserer(c1, lire(c2));
+        supprimer(c2);
+    }
+    trierPaquet(c1);
+}
+
+Chaine rechercherMot(Chaine& c, const char* mot) {
+    Chaine cPoser;
+    initialiser(cPoser);
+    for (unsigned int i = 0; i < strlen(mot); ++i) {
+        if (rechercherLettre(c, mot[i])) {
+            inserer(cPoser, lire(c));
+            suivant(cPoser);
+            supprimer(c);
+        }
+        else {
+            reinserer(c, cPoser);
+            return cPoser;
+        }
+    }
+    return cPoser;
 }

@@ -15,7 +15,7 @@ void initialiser(ConteneurJ& cJoueurs, unsigned int nbJoueurs) {
 void distribution(ConteneurJ& cJoueurs, Chaine& cTalon) {
 	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
 		cJoueurs.joueur[i].main = distribuer(cTalon);
-		trier_main(cJoueurs.joueur[i].main);
+		trierPaquet(cJoueurs.joueur[i].main);
 	}
 }
 
@@ -41,8 +41,10 @@ void detruire(ConteneurJ& cJoueurs) {
 }
 
 void exclure(ConteneurJ& cJoueurs) {
-	for (unsigned int i = 0, j = 0; i < cJoueurs.nbJoueurs; ++i) {
+	unsigned int  j = 0;
+	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
 		if (cJoueurs.joueur[i].points < 100)
 			cJoueurs.joueur[j++] = cJoueurs.joueur[i];
 	}
+	cJoueurs.nbJoueurs = j;
 }

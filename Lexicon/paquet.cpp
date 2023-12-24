@@ -37,11 +37,10 @@ void ecrire(Paquet& paquet, unsigned int index, const Carte& carte) {
 }
 
 void melanger(Paquet& paquet) {
-	srand(time(NULL));
-	for(unsigned int i = paquet.taille; i > 0; --i){
-		int rdm = random_nbr(NB_CARTE);
-		Carte tmp = paquet.carte[i - 1];
-		paquet.carte[i - 1] = paquet.carte[rdm];
+	for (unsigned int i = paquet.taille - 1; i > 0; --i) {
+		int rdm = random_nbr(paquet.taille);
+		Carte tmp = paquet.carte[i];
+		paquet.carte[i] = paquet.carte[rdm];
 		paquet.carte[rdm] = tmp;
 	}
 }

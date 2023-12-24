@@ -6,11 +6,13 @@
 
 void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs);
 
-void destruction(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs);
+void destruction(Table& table, Chaine& cTalon, Chaine& cExposee);
 
 void partie(ConteneurJ& cJoueurs, Dico& dico);
 
 void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, Dico& dico);
+
+void reprise(Chaine& cTalon, Chaine& cExposee);
 
 void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, char cmd, Dico& dico);
 
@@ -22,6 +24,6 @@ void cmdExposee(Chaine& cExposee, Chaine& cJoueur);
 
 void cmdPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico);
 
-void debugPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico);
+void debugPoser(Chaine& cTalon, Chaine& cExposee);
 
 #endif

@@ -6,11 +6,11 @@ using namespace std;
 void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs) {
 	Paquet pTalon = jeu_base();
 	melanger(pTalon);
-	cTalon = convertir(pTalon);
+	initialiser(cTalon);
+	convertirP(cTalon, pTalon);
 	detruire(pTalon);
 
 	initialiser(cExposee);
-	debut(cTalon);
 	inserer(cExposee, lire(cTalon));
 	supprimer(cTalon);
 
@@ -18,11 +18,10 @@ void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& 
 	distribution(cJoueurs, cTalon);
 }
 
-void destruction(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs) {
+void destruction(Table& table, Chaine& cTalon, Chaine& cExposee) {
 	detruire(table);
 	detruire(cTalon);
 	detruire(cExposee);
-	detruire(cJoueurs);
 }
 
 void partie(ConteneurJ& cJoueurs, Dico& dico) {
@@ -37,7 +36,7 @@ void partie(ConteneurJ& cJoueurs, Dico& dico) {
 
 	cout << "La partie est finie" << endl;
 	exclure(cJoueurs);
-	destruction(table, cTalon, cExposee, cJoueurs);
+	destruction(table, cTalon, cExposee);
 }
 
 void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, Dico& dico) {
@@ -50,6 +49,11 @@ void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, 
 			if (nbmots)
 				afficher(table, nbmots);
 
+			afficher(cTalon);
+			afficher(cExposee);
+			debut(cTalon);
+			debut(cExposee);
+
 			cout << "> ";
 			cin >> cmd;
 
@@ -57,6 +61,9 @@ void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, 
 				erreur(1);
 			else
 				supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, cmd, dico);
+
+			if (estVide(cTalon))
+				reprise(cTalon, cExposee);
 		}
 	}
 	cout << "Le tour est fini" << endl << " *Scores" << endl;
@@ -64,6 +71,23 @@ void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, 
 		cJoueurs.joueur[i].points = comptePoints(cJoueurs.joueur[i].main);
 		cout << "Joueur " << cJoueurs.joueur[i].id << " : " << cJoueurs.joueur[i].points << " points" << endl;
 	}
+}
+
+void reprise(Chaine& cTalon, Chaine& cExposee) {
+	while (!estVide(cExposee)) {
+		inserer(cTalon, lire(cExposee));
+		supprimer(cExposee);
+	}
+	Paquet pTalon;
+	initialiser(pTalon, longueur(cTalon));
+	convertirC(cTalon, pTalon);
+	melanger(pTalon);
+	convertirP(cTalon, pTalon);
+
+	inserer(cExposee, lire(cTalon));
+	supprimer(cTalon);
+
+	detruire(pTalon);
 }
 
 void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, char cmd, Dico& dico) {
@@ -78,7 +102,7 @@ void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, un
 		cmdPoser(table, joueur, nbmots, dico);
 		break;
 	case 'D':
-		debugPoser(table, joueur, nbmots, dico);
+		debugPoser(cTalon, cExposee);
 		break;
 	default:
 		erreur(1);
@@ -112,7 +136,7 @@ void cmdTalon(Chaine& cTalon, Chaine& cExposee, Chaine& main) {
 		inserer(cExposee, lire(main));
 		ecrire(main, lire(cTalon));
 		supprimer(cTalon);
-		trier_main(main);
+		trierPaquet(main);
 	}
 }
 
@@ -126,7 +150,7 @@ void cmdExposee(Chaine& cExposee, Chaine& main) {
 		Carte tmp = lire(main);
 		ecrire(main, lire(cExposee));
 		ecrire(cExposee, tmp);
-		trier_main(main);
+		trierPaquet(main);
 	}
 }
 
@@ -136,53 +160,22 @@ void cmdPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico) {
 	if (!cin)
 		erreur(1);
 	else {
-		if (!rechercherDico(dico, mot)) {
+		Chaine cPoser = rechercherMot(joueur.main, mot);
+		if (!rechercherDico(dico, mot) || estVide(cPoser)) {
+			if (!estVide(cPoser))
+				reinserer(joueur.main, cPoser);
 			joueur.points += 3;
+			detruire(cPoser);
 			erreur(2);
 		}
 		else {
-			Chaine cPoser;
-			initialiser(cPoser);
-			for (unsigned int i = 0; i < strlen(mot); ++i) {
-				if (rechercherLettre(joueur.main, mot[i])) {
-					inserer(cPoser, lire(joueur.main));
-					suivant(cPoser);
-					supprimer(joueur.main);
-				}
-				else {
-					joueur.points += 3;
-					detruire(cPoser);
-					erreur(2);
-				}
-			}
 			ecrire(table, nbmots++, cPoser);
 		}
 	}
 	delete[] mot;
 }
 
-void debugPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico) {
-	char* mot = new char[NB_LETTRE];
-	cin >> mot;
-	if (!cin)
-		erreur(1);
-	else {
-		Chaine cPoser;
-		initialiser(cPoser);
-		for (unsigned int i = 0; i < strlen(mot); ++i) {
-			if (rechercherLettre(joueur.main, mot[i])) {
-				inserer(cPoser, lire(joueur.main));
-				suivant(cPoser);
-				supprimer(joueur.main);
-			}
-			else {
-				erreur(2);
-				joueur.points += 3;
-				detruire(cPoser);
-				return;
-			}
-		}
-		ecrire(table, nbmots++, cPoser);
-	}
-	delete[] mot;
+void debugPoser(Chaine& cTalon, Chaine& cExposee) {
+	inserer(cExposee, lire(cTalon));
+	supprimer(cTalon);
 }
