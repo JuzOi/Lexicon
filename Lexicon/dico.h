@@ -13,12 +13,12 @@ struct Dico {
 
 void initialiser(Dico& dico, unsigned int nbmots, unsigned int nblettres);
 
-bool rechercherDico(Dico& dico, char* mot);
+bool rechercherDico(const Dico& dico, char* mot);
 
 void chargerDico(Dico& dico, istream& in);
 
 void detruire(Dico& dico);
 
-void afficher(Dico& dico);
+void afficher(const Dico& dico);
 
 #endif

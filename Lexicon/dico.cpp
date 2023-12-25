@@ -15,7 +15,7 @@ void initialiser(Dico& dico, unsigned int nbmots, unsigned int nblettres) {
     dico.nblettres = nblettres;
 }
 
-bool rechercherDico(Dico& dico, char* mot) {
+bool rechercherDico(const Dico& dico, char* mot) {
     unsigned int deb = 0;
     unsigned int fin = NB_MOTS-1;
     unsigned int mil = (fin + deb) / 2;
@@ -54,7 +54,7 @@ void detruire(Dico& dico) {
     dico.mot = nullptr;
 }
 
-void afficher(Dico& dico) {
+void afficher(const Dico& dico) {
     for (unsigned int i =0 ; i < dico.nbmots; ++i)
         cout << dico.mot[i] << endl;
 }

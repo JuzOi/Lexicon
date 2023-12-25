@@ -229,19 +229,47 @@ void reinserer(Chaine& c1, Chaine& c2) {
     trierPaquet(c1);
 }
 
-Chaine rechercherMot(Chaine& c, const char* mot) {
-    Chaine cPoser;
-    initialiser(cPoser);
+bool comparer(Chaine& c, const char* mot) {
+    if (longueur(c) != strlen(mot))
+        return false;
+    debut(c);
     for (unsigned int i = 0; i < strlen(mot); ++i) {
-        if (rechercherLettre(c, mot[i])) {
-            inserer(cPoser, lire(c));
-            suivant(cPoser);
-            supprimer(c);
+        if (lire(c).lettre != mot[i])
+            return false;
+        suivant(c);
+    }
+    return true;
+}
+
+void rechercherMot(Chaine& c1, Chaine& c2, const char* mot) {
+    for (unsigned int i = 0; i < strlen(mot); ++i) {
+        if (rechercherLettre(c1, mot[i])) {
+            inserer(c2, lire(c1));
+            suivant(c2);
+            supprimer(c1);
         }
         else {
-            reinserer(c, cPoser);
-            return cPoser;
+            return;
         }
     }
-    return cPoser;
+}
+
+bool verifMot(Chaine& cRemplacer, Chaine& cEchanger, Chaine& cTable, Chaine& cJoueur, char* mot) {
+    while (longueur(cRemplacer) < strlen(mot)) {
+        debut(cRemplacer);
+        debut(cTable);
+        unsigned int i = 0;
+        for (; i < longueur(cRemplacer); ++i) {
+            inserer(cEchanger, lire(cTable));
+            supprimer(cTable);
+        }
+        if (lire(cTable).lettre != mot[i])
+            return false;
+        else {
+            inserer(cRemplacer, lire(cTable));
+            supprimer(cTable);
+        }
+        rechercherMot(cJoueur, cRemplacer, mot + i);
+    }
+    return true;
 }

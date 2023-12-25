@@ -136,6 +136,10 @@ bool rechercherLettre(Chaine& c, const char lettre);
 
 void reinserer(Chaine& c1, Chaine& c2);
 
-Chaine rechercherMot(Chaine& c, const char* mot);
+bool comparer(Chaine& c, const char* mot);
+
+void rechercherMot(Chaine& c1, Chaine& c2, const char* mot);
+
+bool verifMot(Chaine& cRemplacer, Chaine& cEchanger, Chaine& cTable, Chaine& cJoueur, char* mot);
 
 #endif /*CHAINE_H_*/

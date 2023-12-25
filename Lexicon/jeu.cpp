@@ -24,14 +24,16 @@ void destruction(Table& table, Chaine& cTalon, Chaine& cExposee) {
 	detruire(cExposee);
 }
 
-void partie(ConteneurJ& cJoueurs, Dico& dico) {
+void partie(ConteneurJ& cJoueurs, const Dico& dico) {
 	Table table;
 	Chaine cTalon;
 	Chaine cExposee;
 
-	while (!finPartie(cJoueurs)){
+	while (!finPartie(cJoueurs)) {
+		unsigned int nbmots = 0;
+		unsigned int i = 0;
 		initialisation(table, cTalon, cExposee, cJoueurs);
-		tour(table, cTalon, cExposee, cJoueurs, dico);
+		tour(table, cTalon, cExposee, cJoueurs, i, nbmots, dico);
 	}
 
 	cout << "La partie est finie" << endl;
@@ -39,38 +41,35 @@ void partie(ConteneurJ& cJoueurs, Dico& dico) {
 	destruction(table, cTalon, cExposee);
 }
 
-void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, Dico& dico) {
-	char cmd;
-	unsigned int nbmots = 0;
-	while(!finTour(cJoueurs)){
+void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, unsigned int& i, unsigned int& nbmots, const Dico& dico) {
+	if (!finTour(cJoueurs)){
+		afficherEtat(table, cExposee, cJoueurs.joueur[i], nbmots);
+
+		supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, dico);
+
+		if (estVide(cTalon))
+			reprise(cTalon, cExposee);
+
+		if (++i == cJoueurs.nbJoueurs)
+			i = 0;
+		tour(table, cTalon, cExposee, cJoueurs, i, nbmots, dico);
+	}
+	else {
+		cout << "Le tour est fini" << endl << "* Scores" << endl;
 		for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
-			cout << "*" << " Joueur " << cJoueurs.joueur[i].id << " (" << lire(cExposee).lettre << ") ";
-			afficher(cJoueurs.joueur[i].main);
-			if (nbmots)
-				afficher(table, nbmots);
-
-			afficher(cTalon);
-			afficher(cExposee);
-			debut(cTalon);
-			debut(cExposee);
-
-			cout << "> ";
-			cin >> cmd;
-
-			if (!cin || (cmd != 'E' && cmd != 'T' && cmd != 'P' &&  cmd != 'D'))
-				erreur(1);
-			else
-				supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, cmd, dico);
-
-			if (estVide(cTalon))
-				reprise(cTalon, cExposee);
+			cJoueurs.joueur[i].points += comptePoints(cJoueurs.joueur[i].main);
+			cout << "Joueur " << cJoueurs.joueur[i].id << " : " << cJoueurs.joueur[i].points << " points" << endl;
 		}
 	}
-	cout << "Le tour est fini" << endl << " *Scores" << endl;
-	for (unsigned int i = 0; i < cJoueurs.nbJoueurs; ++i) {
-		cJoueurs.joueur[i].points = comptePoints(cJoueurs.joueur[i].main);
-		cout << "Joueur " << cJoueurs.joueur[i].id << " : " << cJoueurs.joueur[i].points << " points" << endl;
-	}
+}
+
+void afficherEtat(const Table& table, const Chaine& cExposee, Joueur& joueur, const unsigned int& nbmots) {
+	cout << endl << "*" << " Joueur " << joueur.id << " (" << lire(cExposee).lettre << ") ";
+	afficher(joueur.main);
+	if (nbmots)
+		afficher(table, nbmots);
+
+	cout << "> ";
 }
 
 void reprise(Chaine& cTalon, Chaine& cExposee) {
@@ -90,83 +89,112 @@ void reprise(Chaine& cTalon, Chaine& cExposee) {
 	detruire(pTalon);
 }
 
-void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, char cmd, Dico& dico) {
-	switch (cmd) {
-	case 'E':
-		cmdExposee(cExposee, joueur.main);
-		break;
-	case 'T':
-		cmdTalon(cTalon, cExposee, joueur.main);
-		break;
-	case 'P':
-		cmdPoser(table, joueur, nbmots, dico);
-		break;
-	case 'D':
-		debugPoser(cTalon, cExposee);
-		break;
-	default:
-		erreur(1);
-		break;
+void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
+	char cmd;
+	cin >> cmd;
+	if (cin.fail() || cin.peek() != ' ')
+		erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+	else {
+		switch (cmd) {
+		case 'E':
+			cmdExposee(table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		case 'T':
+			cmdTalon(table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		case 'P':
+			cmdPoser(table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		case 'R':
+			cmdRemplacer(table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		case 'C':
+			cmdCompleter(table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		case 'D':
+			debugCompleter(table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		default:
+			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+			break;
+		}
 	}
 }
 
-void erreur(unsigned int n) {
+void erreur(unsigned int n, Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
 	switch (n)
 	{
 	case 1:
 		cin.clear();
 		cin.ignore(INT_MAX, '\n');
 		cout << "Coup invalide, recommencez" << endl;
+		afficherEtat(table, cExposee, joueur, nbmots);
+		supercmd(table, cTalon, cExposee, joueur, nbmots, dico);
 		break;
 	case 2:
 		cout << "Mot invalide, vous passez votre tour" << endl;
+		joueur.points += 3;
 		break;
 	default:
 		break;
 	}
 }
 
-void cmdTalon(Chaine& cTalon, Chaine& cExposee, Chaine& main) {
+void cmdTalon(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
 	char mot;
 	cin >> mot;
-	if (!cin || !rechercherLettre(main, mot)) {
-		erreur(1);
-	}
+	if (cin.fail() || cin.peek() != '\n')
+		erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 	else {
-		inserer(cExposee, lire(main));
-		ecrire(main, lire(cTalon));
-		supprimer(cTalon);
-		trierPaquet(main);
+		bool lettreTrouvee = rechercherLettre(joueur.main, mot);
+		if (!lettreTrouvee)
+			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+		else {
+			inserer(cExposee, lire(joueur.main));
+			ecrire(joueur.main, lire(cTalon));
+			supprimer(cTalon);
+			trierPaquet(joueur.main);
+		}
+	}
+
+}
+
+void cmdExposee(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
+	char mot;
+	cin >> mot;
+	if (cin.fail() || cin.peek() != '\n')
+		erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+	else {
+		bool lettreTrouvee = rechercherLettre(joueur.main, mot);
+		if (!lettreTrouvee)
+			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+		else {
+			Carte tmp = lire(joueur.main);
+			ecrire(joueur.main, lire(cExposee));
+			ecrire(cExposee, tmp);
+			trierPaquet(joueur.main);
+		}
 	}
 }
 
-void cmdExposee(Chaine& cExposee, Chaine& main) {
-	char mot;
-	cin >> mot;
-	if (!cin || !rechercherLettre(main, mot)) {
-		erreur(1);
-	}
-	else {
-		Carte tmp = lire(main);
-		ecrire(main, lire(cExposee));
-		ecrire(cExposee, tmp);
-		trierPaquet(main);
-	}
-}
-
-void cmdPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico) {
+void cmdPoser(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
 	char* mot = new char[NB_LETTRE];
 	cin >> mot;
-	if (!cin)
-		erreur(1);
+	if (cin.fail() || cin.peek() != '\n')
+		erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 	else {
-		Chaine cPoser = rechercherMot(joueur.main, mot);
-		if (!rechercherDico(dico, mot) || estVide(cPoser)) {
+		Chaine cPoser;
+		initialiser(cPoser);
+		rechercherMot(joueur.main, cPoser, mot);
+		bool motTrouvee = comparer(cPoser, mot);
+		if (!motTrouvee || !rechercherDico(dico, mot)) {
 			if (!estVide(cPoser))
 				reinserer(joueur.main, cPoser);
-			joueur.points += 3;
 			detruire(cPoser);
-			erreur(2);
+			if (!motTrouvee)
+				erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+			else
+				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
 		}
 		else {
 			ecrire(table, nbmots++, cPoser);
@@ -175,7 +203,41 @@ void cmdPoser(Table& table, Joueur& joueur, unsigned int& nbmots, Dico& dico) {
 	delete[] mot;
 }
 
-void debugPoser(Chaine& cTalon, Chaine& cExposee) {
-	inserer(cExposee, lire(cTalon));
-	supprimer(cTalon);
+void cmdRemplacer(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
+	unsigned int numero;
+	char* mot = new char[NB_LETTRE];
+	cin >> numero;
+	if (cin.fail() || cin.peek() != ' ' || numero <= 0 || numero > nbmots)
+		erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+	else {
+		cin >> mot;
+		if (cin.fail() || cin.peek() != '\n' || longueur(table.mot[numero - 1]) != strlen(mot))
+			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+		else {
+			if (!rechercherDico(dico, mot))
+				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
+			else {
+				Chaine cRemplacer;
+				Chaine cEchanger;
+				initialiser(cRemplacer);
+				initialiser(cEchanger);
+				rechercherMot(joueur.main, cRemplacer, mot);
+				if (longueur(cRemplacer) == strlen(mot) || !verifMot(cRemplacer, cEchanger, table.mot[numero - 1], joueur.main, mot))
+					reinserer(cEchanger, table.mot[numero - 1]);
+
+				ecrire(table, numero - 1, cRemplacer);
+				reinserer(joueur.main, cEchanger);
+				detruire(cEchanger);
+			}
+		}
+	}
+	delete[] mot;
+}
+
+void cmdCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
+	return;
+}
+
+void debugCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
+	return;
 }
