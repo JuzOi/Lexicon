@@ -254,22 +254,77 @@ void rechercherMot(Chaine& c1, Chaine& c2, const char* mot) {
     }
 }
 
-bool verifMot(Chaine& cRemplacer, Chaine& cEchanger, Chaine& cTable, Chaine& cJoueur, char* mot) {
-    while (longueur(cRemplacer) < strlen(mot)) {
-        debut(cRemplacer);
-        debut(cTable);
-        unsigned int i = 0;
-        for (; i < longueur(cRemplacer); ++i) {
-            inserer(cEchanger, lire(cTable));
-            supprimer(cTable);
-        }
-        if (lire(cTable).lettre != mot[i])
-            return false;
+bool peutRemplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur) {
+    if (longueur(motAChanger) != strlen(nouveauMot))
+        return false;
+    Chaine tmp;
+    initialiser(tmp);
+    debut(motAChanger);
+    while (!estFin(motAChanger)) {
+        if (lire(motAChanger).lettre != *nouveauMot && !rechercherLettre(mainJoueur, *nouveauMot))
+            fin(motAChanger);
         else {
-            inserer(cRemplacer, lire(cTable));
-            supprimer(cTable);
+            if (rechercherLettre(mainJoueur, *nouveauMot)) {
+                inserer(tmp, lire(mainJoueur));
+                supprimer(mainJoueur);
+            }
+            suivant(motAChanger);
+            ++nouveauMot;
         }
-        rechercherMot(cJoueur, cRemplacer, mot + i);
     }
-    return true;
+    reinserer(mainJoueur, tmp);
+    detruire(tmp);
+    trierPaquet(mainJoueur);
+    return estFin(motAChanger) && (*nouveauMot == '\0');
+}
+
+void remplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur) {
+    debut(motAChanger);
+    while (!estFin(motAChanger)) {
+        if (rechercherLettre(mainJoueur, *nouveauMot)) {
+            Carte tmp = lire(mainJoueur);
+            ecrire(mainJoueur, lire(motAChanger));
+            ecrire(motAChanger, tmp);
+        }
+        suivant(motAChanger);
+        ++nouveauMot;
+    }
+    trierPaquet(mainJoueur);
+}
+
+bool peutCompleter(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur) {
+    if (longueur(motAChanger) >= strlen(nouveauMot))
+        return false;
+    Chaine tmp;
+    initialiser(tmp);
+    debut(motAChanger);
+    for (; *nouveauMot != '\0'; ++nouveauMot) {
+        if (!rechercherLettre(mainJoueur, *nouveauMot) && (estFin(motAChanger) || lire(motAChanger).lettre != *nouveauMot)) {
+            reinserer(mainJoueur, tmp);
+            detruire(tmp);
+            return false;
+        }
+        else {
+            if (!estFin(motAChanger) && lire(motAChanger).lettre == *nouveauMot)
+                suivant(motAChanger);
+            else {
+                inserer(tmp, lire(mainJoueur));
+                supprimer(mainJoueur);
+            }
+        }
+    }
+    reinserer(mainJoueur, tmp);
+    detruire(tmp);
+    return estFin(motAChanger);
+}
+
+void completer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur) {
+    debut(motAChanger);
+    for (; *nouveauMot != '\0'; ++nouveauMot) {
+        if (rechercherLettre(mainJoueur, *nouveauMot) && (estFin(motAChanger) || lire(motAChanger).lettre != *nouveauMot)) {
+            inserer(motAChanger, lire(mainJoueur));
+            supprimer(mainJoueur);
+        }
+        suivant(motAChanger);
+    }
 }

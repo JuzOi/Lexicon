@@ -140,6 +140,12 @@ bool comparer(Chaine& c, const char* mot);
 
 void rechercherMot(Chaine& c1, Chaine& c2, const char* mot);
 
-bool verifMot(Chaine& cRemplacer, Chaine& cEchanger, Chaine& cTable, Chaine& cJoueur, char* mot);
+bool peutRemplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur);
+
+void remplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur);
+
+bool peutCompleter(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur);
+
+void completer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur);
 
 #endif /*CHAINE_H_*/

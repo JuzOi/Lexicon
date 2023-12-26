@@ -217,17 +217,10 @@ void cmdRemplacer(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur
 			if (!rechercherDico(dico, mot))
 				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
 			else {
-				Chaine cRemplacer;
-				Chaine cEchanger;
-				initialiser(cRemplacer);
-				initialiser(cEchanger);
-				rechercherMot(joueur.main, cRemplacer, mot);
-				if (longueur(cRemplacer) == strlen(mot) || !verifMot(cRemplacer, cEchanger, table.mot[numero - 1], joueur.main, mot))
-					reinserer(cEchanger, table.mot[numero - 1]);
-
-				ecrire(table, numero - 1, cRemplacer);
-				reinserer(joueur.main, cEchanger);
-				detruire(cEchanger);
+				if (!peutRemplacer(table.mot[numero - 1], mot, joueur.main))
+					erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+				else
+					remplacer(table.mot[numero - 1], mot, joueur.main);
 			}
 		}
 	}
@@ -235,7 +228,27 @@ void cmdRemplacer(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur
 }
 
 void cmdCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
-	return;
+	unsigned int numero;
+	char* mot = new char[NB_LETTRE];
+	cin >> numero;
+	if (cin.fail() || cin.peek() != ' ' || numero <= 0 || numero > nbmots)
+		erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+	else {
+		cin >> mot;
+		if (cin.fail() || cin.peek() != '\n' || longueur(table.mot[numero - 1]) >= strlen(mot))
+			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+		else {
+			if (!rechercherDico(dico, mot))
+				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
+			else {
+				if (!peutCompleter(table.mot[numero - 1], mot, joueur.main))
+					erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
+				else
+					completer(table.mot[numero - 1], mot, joueur.main);
+			}
+		}
+	}
+	delete[] mot;
 }
 
 void debugCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {

@@ -36,12 +36,16 @@ void ecrire(Paquet& paquet, unsigned int index, const Carte& carte) {
 	paquet.carte[index] = carte;
 }
 
+void echanger(Carte& c1, Carte& c2) {
+	Carte tmp = c1;
+	c1 = c2;
+	c2 = tmp;
+}
+
 void melanger(Paquet& paquet) {
 	for (unsigned int i = paquet.taille - 1; i > 0; --i) {
 		int rdm = random_nbr(paquet.taille);
-		Carte tmp = paquet.carte[i];
-		paquet.carte[i] = paquet.carte[rdm];
-		paquet.carte[rdm] = tmp;
+		echanger(paquet.carte[i], paquet.carte[rdm]);
 	}
 }
 

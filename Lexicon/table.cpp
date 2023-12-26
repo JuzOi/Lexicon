@@ -31,6 +31,10 @@ void detruire(Table& t) {
 	t.mot = NULL;
 }
 
+Chaine lire(Table& t, unsigned int i) {
+	return t.mot[i];
+}
+
 /**
  * @brief Ecrire un item dans un conteneur d'items
  * @param[in,out] c : le conteneur d'items

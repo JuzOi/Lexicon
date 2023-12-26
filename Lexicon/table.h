@@ -17,6 +17,8 @@ void initialiser(Table& t, unsigned int c, unsigned int p);
 
 void detruire(Table& t);
 
+Chaine lire(Table& t, unsigned int i);
+
 void ecrire(Table& t, unsigned int i, const Chaine& mot);
 
 void afficher(const Table& t, unsigned int nb);
