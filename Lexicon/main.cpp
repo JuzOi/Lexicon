@@ -20,7 +20,7 @@ int main(int argc, const char* argv[]) {
 	// parametre sur la ligne de commande
 	unsigned int nbJoueurs = 0;
 	if (argc >= 2) {
-		cout << "le 1er parametre est '" << argv[1] << "'" << endl;
+		cout << "(Commandes valides : TEPRC)" << endl;
 		sscanf(argv[1], "%u", &nbJoueurs);
 	}
 	else
