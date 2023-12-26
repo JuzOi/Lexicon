@@ -274,7 +274,6 @@ bool peutRemplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoue
     }
     reinserer(mainJoueur, tmp);
     detruire(tmp);
-    trierPaquet(mainJoueur);
     return estFin(motAChanger) && (*nouveauMot == '\0');
 }
 

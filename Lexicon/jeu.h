@@ -30,6 +30,4 @@ void cmdRemplacer(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur
 
 void cmdCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
 
-void debugCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
-
 #endif

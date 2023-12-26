@@ -111,9 +111,6 @@ void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, un
 		case 'C':
 			cmdCompleter(table, cTalon, cExposee, joueur, nbmots, dico);
 			break;
-		case 'D':
-			debugCompleter(table, cTalon, cExposee, joueur, nbmots, dico);
-			break;
 		default:
 			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 			break;
@@ -249,8 +246,4 @@ void cmdCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur
 		}
 	}
 	delete[] mot;
-}
-
-void debugCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico) {
-	return;
 }
