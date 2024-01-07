@@ -29,7 +29,7 @@ void partie(ConteneurJ& cJoueurs, const Dico& dico) {
 	Chaine cTalon;
 	Chaine cExposee;
 
-	while (!finPartie(cJoueurs)) {
+	while (!finPartie(cJoueurs) && cJoueurs.nbJoueurs >= 2) {
 		unsigned int nbmots = 0;
 		unsigned int i = 0;
 		initialisation(table, cTalon, cExposee, cJoueurs);
@@ -42,15 +42,18 @@ void partie(ConteneurJ& cJoueurs, const Dico& dico) {
 }
 
 void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, unsigned int& i, unsigned int& nbmots, const Dico& dico) {
-	if (!finTour(cJoueurs)){
+	if (!finTour(cJoueurs) && cJoueurs.nbJoueurs >= 1){
 		afficherEtat(table, cExposee, cJoueurs.joueur[i], nbmots);
-
-		supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, dico);
 
 		if (estVide(cTalon))
 			reprise(cTalon, cExposee);
 
-		if (++i == cJoueurs.nbJoueurs)
+		supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, dico);
+
+		if (finPartie(cJoueurs))
+			exclure(cJoueurs);
+
+		if (++i >= cJoueurs.nbJoueurs)
 			i = 0;
 		tour(table, cTalon, cExposee, cJoueurs, i, nbmots, dico);
 	}
@@ -182,11 +185,9 @@ void cmdPoser(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, un
 	else {
 		Chaine cPoser;
 		initialiser(cPoser);
-		rechercherMot(joueur.main, cPoser, mot);
-		bool motTrouvee = comparer(cPoser, mot);
+		bool motTrouvee = rechercherMot(joueur.main, cPoser, mot);
 		if (!motTrouvee || !rechercherDico(dico, mot)) {
-			if (!estVide(cPoser))
-				reinserer(joueur.main, cPoser);
+			reinserer(joueur.main, cPoser);
 			detruire(cPoser);
 			if (!motTrouvee)
 				erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
@@ -211,14 +212,14 @@ void cmdRemplacer(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur
 		if (cin.fail() || cin.peek() != '\n' || longueur(table.mot[numero - 1]) != strlen(mot))
 			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 		else {
-			if (!rechercherDico(dico, mot))
-				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
-			else {
+			if (rechercherDico(dico, mot)){
 				if (!peutRemplacer(table.mot[numero - 1], mot, joueur.main))
 					erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 				else
 					remplacer(table.mot[numero - 1], mot, joueur.main);
 			}
+			else
+				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
 		}
 	}
 	delete[] mot;
@@ -235,14 +236,14 @@ void cmdCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur
 		if (cin.fail() || cin.peek() != '\n' || longueur(table.mot[numero - 1]) >= strlen(mot))
 			erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 		else {
-			if (!rechercherDico(dico, mot))
-				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
-			else {
+			if (rechercherDico(dico, mot)){
 				if (!peutCompleter(table.mot[numero - 1], mot, joueur.main))
 					erreur(1, table, cTalon, cExposee, joueur, nbmots, dico);
 				else
 					completer(table.mot[numero - 1], mot, joueur.main);
 			}
+			else
+				erreur(2, table, cTalon, cExposee, joueur, nbmots, dico);
 		}
 	}
 	delete[] mot;

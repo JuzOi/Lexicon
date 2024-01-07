@@ -136,9 +136,7 @@ bool rechercherLettre(Chaine& c, const char lettre);
 
 void reinserer(Chaine& c1, Chaine& c2);
 
-bool comparer(Chaine& c, const char* mot);
-
-void rechercherMot(Chaine& c1, Chaine& c2, const char* mot);
+bool rechercherMot(Chaine& c1, Chaine& c2, const char* mot);
 
 bool peutRemplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur);
 

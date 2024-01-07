@@ -229,29 +229,18 @@ void reinserer(Chaine& c1, Chaine& c2) {
     trierPaquet(c1);
 }
 
-bool comparer(Chaine& c, const char* mot) {
-    if (longueur(c) != strlen(mot))
-        return false;
-    debut(c);
-    for (unsigned int i = 0; i < strlen(mot); ++i) {
-        if (lire(c).lettre != mot[i])
-            return false;
-        suivant(c);
-    }
-    return true;
-}
-
-void rechercherMot(Chaine& c1, Chaine& c2, const char* mot) {
-    for (unsigned int i = 0; i < strlen(mot); ++i) {
-        if (rechercherLettre(c1, mot[i])) {
+bool rechercherMot(Chaine& c1, Chaine& c2, const char* mot) {
+    for ( ; *mot != '\0'; ++mot) {
+        if (rechercherLettre(c1, *mot)) {
             inserer(c2, lire(c1));
             suivant(c2);
             supprimer(c1);
         }
         else {
-            return;
+            return false;
         }
     }
+    return true;
 }
 
 bool peutRemplacer(Chaine& motAChanger, const char* nouveauMot, Chaine& mainJoueur) {
