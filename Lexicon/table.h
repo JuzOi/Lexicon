@@ -19,6 +19,6 @@ void detruire(Table& t);
 
 void ecrire(Table& t, unsigned int i, const Chaine& mot);
 
-void afficher(const Table& t, unsigned int nb);
+void afficher(const Table& t, unsigned int n);
 
 #endif

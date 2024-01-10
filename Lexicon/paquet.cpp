@@ -8,6 +8,12 @@ using namespace std;
 #include <algorithm>
 #include "paquet.h"
 
+int random_nbr(int max);
+
+void ecrire(Paquet& paquet, unsigned int index, const Carte& carte);
+
+void echanger(Carte& c1, Carte& c2);
+
 Paquet jeu_base() {
 	const unsigned int quantite[NB_LETTRE] = { 2, 2, 2, 2, 5, 1, 2, 2, 4, 1, 1, 2, 1, 3, 2, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1 };
 	const Carte carte[NB_LETTRE] = { {'A', 10}, {'B', 2}, {'C', 8}, {'D', 6}, {'E', 10}, {'F', 2}, {'G', 4}, {'H', 8}, {'I', 10}, {'J', 6}, {'K', 8}, {'L', 8},

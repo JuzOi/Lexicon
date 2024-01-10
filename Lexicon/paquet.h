@@ -15,13 +15,7 @@ struct Paquet {
 
 Paquet jeu_base();
 
-int random_nbr(int max);
-
 void initialiser(Paquet& paquet, unsigned int taille);
-
-void ecrire(Paquet& paquet, unsigned int index, const Carte& carte);
-
-void echanger(Carte& c1, Carte& c2);
 
 void melanger(Paquet& paquet);
 

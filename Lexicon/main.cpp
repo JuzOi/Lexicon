@@ -32,17 +32,19 @@ int main(int argc, const char* argv[]) {
 
 	Dico dico;
 	initialiser(dico, NB_MOTS, NB_LETTRE);
-	if (in)
-		chargerDico(dico, in);
-	in.close();
 
-	ConteneurJ cJoueurs;
-	if (nbJoueurs >= 2) {
-		initialiser(cJoueurs, nbJoueurs);
-		while (cJoueurs.nbJoueurs >= 2) {
-			partie(cJoueurs, dico);
+	if (in) {
+		chargerDico(dico, in);
+		in.close();
+
+		ConteneurJ cJoueurs;
+		if (nbJoueurs >= 2 && nbJoueurs <= 4) {
+			initialiser(cJoueurs, nbJoueurs);
+			while (cJoueurs.nbJoueurs >= 2) {
+				partie(cJoueurs, dico);
+			}
+			detruire(cJoueurs);
 		}
-		detruire(cJoueurs);
 	}
 
 	detruire(dico);

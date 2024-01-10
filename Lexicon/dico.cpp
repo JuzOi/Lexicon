@@ -11,8 +11,7 @@ void initialiser(Dico& dico, unsigned int nbmots, unsigned int nblettres) {
     dico.mot = new char* [nbmots];
     for (unsigned int i = 0; i < nbmots; ++i)
         dico.mot[i] = new char[nblettres];
-    dico.nbmots = nbmots;
-    dico.nblettres = nblettres;
+    dico.capa = nbmots;
 }
 
 bool rechercherDico(const Dico& dico, char* mot) {
@@ -46,15 +45,10 @@ void chargerDico(Dico& dico, istream& in) {
 }
 
 void detruire(Dico& dico) {
-    for (unsigned int i = 0; i < dico.nbmots; ++i) {
+    for (unsigned int i = 0; i < dico.capa; ++i) {
         delete[] dico.mot[i];
         dico.mot[i] = nullptr;
     }
     delete[] dico.mot;
     dico.mot = nullptr;
-}
-
-void afficher(const Dico& dico) {
-    for (unsigned int i =0 ; i < dico.nbmots; ++i)
-        cout << dico.mot[i] << endl;
 }

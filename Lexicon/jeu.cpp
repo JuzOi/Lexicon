@@ -3,6 +3,30 @@ using namespace std;
 
 #include "jeu.h"
 
+void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs);
+
+void destruction(Table& table, Chaine& cTalon, Chaine& cExposee);
+
+void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, unsigned int& i, unsigned int& nbmots, const Dico& dico);
+
+void afficherEtat(const Table& table, const Chaine& cExposee, Joueur& joueur, const unsigned int& nbmots);
+
+void reprise(Chaine& cTalon, Chaine& cExposee);
+
+void supercmd(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
+void erreur(unsigned int n, Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
+void cmdTalon(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
+void cmdExposee(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
+void cmdPoser(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
+void cmdRemplacer(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
+void cmdCompleter(Table& table, Chaine& cTalon, Chaine& cExposee, Joueur& joueur, unsigned int& nbmots, const Dico& dico);
+
 void initialisation(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs) {
 	Paquet pTalon = jeu_base();
 	melanger(pTalon);
@@ -29,11 +53,14 @@ void partie(ConteneurJ& cJoueurs, const Dico& dico) {
 	Chaine cTalon;
 	Chaine cExposee;
 
+	unsigned int commence = 0;
 	while (!finPartie(cJoueurs) && cJoueurs.nbJoueurs >= 2) {
 		unsigned int nbmots = 0;
-		unsigned int i = 0;
+		unsigned int i = commence;
 		initialisation(table, cTalon, cExposee, cJoueurs);
 		tour(table, cTalon, cExposee, cJoueurs, i, nbmots, dico);
+		if (++commence >= cJoueurs.nbJoueurs)
+			commence = 0;
 	}
 
 	cout << "La partie est finie" << endl;
@@ -49,9 +76,6 @@ void tour(Table& table, Chaine& cTalon, Chaine& cExposee, ConteneurJ& cJoueurs, 
 			reprise(cTalon, cExposee);
 
 		supercmd(table, cTalon, cExposee, cJoueurs.joueur[i], nbmots, dico);
-
-		if (finPartie(cJoueurs))
-			exclure(cJoueurs);
 
 		if (++i >= cJoueurs.nbJoueurs)
 			i = 0;
